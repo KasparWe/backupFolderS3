@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+    backup:
+        image: kawetsch/backup-folder-s3
+        environment:
+            S3_ACCESS_KEY_ID: 
+            S3_SECRET_ACCESS_KEY: 
+            S3_BUCKET: 
+            FILE_NAME: 
+            S3_REGION: 
+            S3_ENDPOINT: 
+            SOURCE_DIR: /data/backup
+            TARGET_DIR: 
+            #SCHEDULE: '@daily'
+        volumes: 
+            - './data/:/data/backup'
