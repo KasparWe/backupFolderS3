@@ -47,21 +47,31 @@ export AWS_DEFAULT_REGION=$S3_REGION
 
 echo "creating archive..."
 
-# this has to be executed like this, because we have two level expansion in variables
-eval "export BACKUP_DST_FULL_PATH=${TARGET_DIR}/${FILE_NAME}.tar.gz"
+if [ ${ADD_TIMESTAMP} == 'true' ]
+then
+  echo "adding timestamp to file"
+  eval "export BACKUP_DST_FULL_PATH=${TARGET_DIR}/${FILE_NAME}-$(date +"%Y-%m-%dT%H:%M:%SZ").tar.gz"
+else
+  eval "export BACKUP_DST_FULL_PATH=${TARGET_DIR}/${FILE_NAME}.tar.gz"
+fi
 
+# this has to be executed like this, because we have two level expansion in variables
 BACKUP_DST_DIR=$(dirname "${BACKUP_DST_FULL_PATH}")
 
 mkdir -p ${BACKUP_DST_DIR}
 echo "Gzipping ${SOURCE_DIR} into ${BACKUP_DST_FULL_PATH}"
 
 tar -czf ${BACKUP_DST_FULL_PATH} -C ${SOURCE_DIR} .
-cp ${BACKUP_DST_FULL_PATH} latest.tar.gz
 
 
 echo "archive created, uploading..."
 cat ${BACKUP_DST_FULL_PATH} | aws $AWS_ARGS s3 cp - s3://${S3_BUCKET}${BACKUP_DST_FULL_PATH} || exit 2
-cat ${BACKUP_DST_FULL_PATH} | aws $AWS_ARGS s3 cp - s3://${S3_BUCKET}/backup/content/backup_latest.tar.gz || exit 2
 
+if [ ${UPLOAD_LATEST} == 'true' ]
+then
+  cp ${BACKUP_DST_FULL_PATH} latest.tar.gz
+  echo "latest archive created, uploading latest..."
+  cat ${BACKUP_DST_FULL_PATH} | aws $AWS_ARGS s3 cp - s3://${S3_BUCKET}${TARGET_DIR}/latest.tar.gz || exit 2
+fi
 
 echo "backup finished"

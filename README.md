@@ -18,4 +18,6 @@ S3_ENDPOINT= 	// you can set your api origin here (eg. DigitalOcean)
 SOURCE_DIR=
 TARGET_DIR=
 SCHEDULE=
+ADD_TIMESTAMP=true  // adds the current time and date to the end of tilename
+UPLOAD_LATEST=false   // uploads the same file with the filename latest.tar.gz
 ```

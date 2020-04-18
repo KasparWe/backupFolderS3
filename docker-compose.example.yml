@@ -11,6 +11,8 @@ services:
             S3_ENDPOINT: 
             SOURCE_DIR: /data/backup
             TARGET_DIR: 
+            UPLOAD_LATEST: 'false'
+            ADD_TIMESTAMP: 'true'
             #SCHEDULE: '@daily'
         volumes: 
             - './data/:/data/backup'
